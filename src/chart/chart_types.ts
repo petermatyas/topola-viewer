@@ -9,6 +9,7 @@ import {
   ChartColors as TopolaChartColors,
 } from 'topola';
 import {ChartColors, Ids, PlaceDisplay, Sex} from '../sidepanel/config/config';
+import {TimelineHourglassChart} from './timeline_hourglass_chart';
 
 /** Supported chart types. */
 export enum ChartType {
@@ -30,6 +31,10 @@ export interface ChartProps {
   hideSex?: Sex;
   placeDisplay?: PlaceDisplay;
   placeCount?: number;
+  /** Max. number of ancestor generations shown; undefined means all. */
+  ancestorGenerations?: number;
+  /** Max. number of descendant generations shown; undefined means all. */
+  descendantGenerations?: number;
   /** Called once after the initial D3 layout and SVG render completes. */
   onFirstRender?: () => void;
 }
@@ -43,7 +48,8 @@ export const chartColors = new Map<ChartColors, TopolaChartColors>([
 export function getChartType(chartType: ChartType) {
   switch (chartType) {
     case ChartType.Hourglass:
-      return HourglassChart;
+      // Hourglass chart with a time axis: boxes placed at birth years.
+      return TimelineHourglassChart;
     case ChartType.Relatives:
       return RelativesChart;
     case ChartType.Fancy:

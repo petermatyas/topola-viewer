@@ -29,6 +29,10 @@ export interface Config {
   sex: Sex;
   place: PlaceDisplay;
   placeCount: number;
+  /** Max. number of ancestor generations shown; undefined means all. */
+  ancestorGenerations?: number;
+  /** Max. number of descendant generations shown; undefined means all. */
+  descendantGenerations?: number;
 }
 
 export const DEFALUT_CONFIG: Config = {
@@ -75,14 +79,37 @@ export function argsToConfig(args: ParsedQuery<unknown>): Config {
     return typeof value === 'string' ? value : undefined;
   };
 
+  const getGenerations = (name: string) => {
+    const n = parseInt(getParam(name) ?? '', 10);
+    return n >= 0 ? n : undefined;
+  };
+
   const placeCount = parseInt(getParam('pn') ?? '', 10);
-  return {
+  const config: Config = {
     color: COLOR_ARG.get(getParam('c') ?? '') ?? DEFALUT_CONFIG.color,
     id: ID_ARG.get(getParam('i') ?? '') ?? DEFALUT_CONFIG.id,
     sex: SEX_ARG.get(getParam('s') ?? '') ?? DEFALUT_CONFIG.sex,
     place: PLACE_ARG.get(getParam('p') ?? '') ?? DEFALUT_CONFIG.place,
     placeCount: placeCount >= 1 ? placeCount : DEFALUT_CONFIG.placeCount,
   };
+  const ancestorGenerations = getGenerations('ga');
+  if (ancestorGenerations !== undefined) {
+    config.ancestorGenerations = ancestorGenerations;
+  }
+  const descendantGenerations = getGenerations('gd');
+  if (descendantGenerations !== undefined) {
+    config.descendantGenerations = descendantGenerations;
+  }
+  return config;
+}
+
+/** Parses the value of a generation limit input. Empty means no limit. */
+function parseGenerationsInput(value: string): number | undefined | null {
+  if (value.trim() === '') {
+    return undefined;
+  }
+  const n = parseInt(value, 10);
+  return n >= 0 ? n : null;
 }
 
 export function configToArgs(config: Config): ParsedQuery {
@@ -108,6 +135,12 @@ export function configToArgs(config: Config): ParsedQuery {
     config.placeCount !== DEFALUT_CONFIG.placeCount
   ) {
     result.pn = String(config.placeCount);
+  }
+  if (config.ancestorGenerations !== undefined) {
+    result.ga = String(config.ancestorGenerations);
+  }
+  if (config.descendantGenerations !== undefined) {
+    result.gd = String(config.descendantGenerations);
   }
   return result;
 }
@@ -344,6 +377,61 @@ export function ConfigPanel(props: {
                 }
               />
             </Form.Field>
+          </Item.Content>
+        </Item>
+        <Item>
+          <Item.Content>
+            <Header sub>
+              <FormattedMessage
+                id="config.generations"
+                defaultMessage="Generations"
+              />
+            </Header>
+            {(
+              [
+                [
+                  'ancestorGenerations',
+                  'config.generations.ANCESTORS',
+                  'ancestors',
+                ],
+                [
+                  'descendantGenerations',
+                  'config.generations.DESCENDANTS',
+                  'descendants',
+                ],
+              ] as const
+            ).map(([key, messageId, defaultMessage]) => (
+              <Form.Field className="no-margin" key={key}>
+                <label>
+                  <FormattedMessage
+                    id={messageId}
+                    defaultMessage={defaultMessage}
+                  />
+                </label>
+                <FormattedMessage
+                  id="config.generations.ALL"
+                  defaultMessage="all"
+                >
+                  {(placeholder) => (
+                    <Input
+                      type="number"
+                      min={0}
+                      max={99}
+                      size="mini"
+                      style={{width: '5em'}}
+                      placeholder={String(placeholder)}
+                      value={props.config[key] ?? ''}
+                      onChange={(_e, {value}) => {
+                        const n = parseGenerationsInput(value);
+                        if (n !== null) {
+                          props.onChange({...props.config, [key]: n});
+                        }
+                      }}
+                    />
+                  )}
+                </FormattedMessage>
+              </Form.Field>
+            ))}
           </Item.Content>
         </Item>
       </Item.Group>

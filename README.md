@@ -279,6 +279,44 @@ docker run -d -p 8080:8080 \
   ghcr.io/pewu/topola-viewer:latest
 ```
 
+### Historical Events on the Timeline
+
+The hourglass chart shows historical events (wars, revolutions, etc.) on its
+time axis. They are loaded at runtime from `timeline-events.json`, served next
+to `index.html`, so they can be changed on the server without rebuilding the
+app. The default list is in
+[public/timeline-events.json](public/timeline-events.json).
+
+The file contains an array of events. `from` and `to` are years (`1914`) or
+dates (`"1914"`, `"1914-07"`, `"1914-07-28"`). Without `to`, the event lasts
+until the end of the given year, month or day. `color` is optional (`#rgb`,
+`#rrggbb` or a color name). Periods are drawn as bands, short events as dashed
+lines.
+
+```json
+[
+  {
+    "label": "I. világháború",
+    "from": "1914-07-28",
+    "to": "1918-11-11",
+    "color": "#6d4c41"
+  },
+  {"label": "Kiegyezés", "from": "1867-02-17"}
+]
+```
+
+To use your own list, mount it over the default file:
+
+```bash
+docker run -d -p 8080:8080 \
+  -v ./my-events.json:/app/public/timeline-events.json \
+  ghcr.io/pewu/topola-viewer:latest
+```
+
+or point the app to another file with the `TIMELINE_EVENTS_URL` environment
+variable (`VITE_TIMELINE_EVENTS_URL` at build time). An empty array (`[]`) turns
+the events off. If the file is missing or invalid, no events are shown.
+
 ### Building the Base Image Locally
 
 To build the base image from source:

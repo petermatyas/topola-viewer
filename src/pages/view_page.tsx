@@ -185,6 +185,8 @@ export function ViewPage() {
         hideSex={config.sex}
         placeDisplay={config.place}
         placeCount={config.placeCount}
+        ancestorGenerations={config.ancestorGenerations}
+        descendantGenerations={config.descendantGenerations}
         onFirstRender={() => setLoadingStatus('')}
       />
     );

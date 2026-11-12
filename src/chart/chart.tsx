@@ -1,6 +1,7 @@
 import {useEffect, useMemo, useRef} from 'react';
 import {useIntl} from 'react-intl';
 import {PlaceDisplay} from '../sidepanel/config/config';
+import {filterByGenerations} from '../util/generation_filter';
 import {Media} from '../util/media';
 import {DEFAULT_PLACE_DISPLAY_COUNT, shortenPlace} from '../util/place_util';
 import {usePrevious} from '../util/previous-hook';
@@ -15,7 +16,7 @@ export function Chart(props: ChartProps) {
   const placeDisplay = props.placeDisplay ?? PlaceDisplay.FULL;
   const placeCount = props.placeCount ?? DEFAULT_PLACE_DISPLAY_COUNT;
 
-  const processedData = useMemo(() => {
+  const placeProcessedData = useMemo(() => {
     if (placeDisplay === PlaceDisplay.FULL) {
       return props.data;
     }
@@ -48,6 +49,22 @@ export function Chart(props: ChartProps) {
     };
   }, [props.data, placeDisplay, placeCount]);
 
+  const processedData = useMemo(
+    () =>
+      filterByGenerations(
+        placeProcessedData,
+        props.selection.id,
+        props.ancestorGenerations,
+        props.descendantGenerations,
+      ),
+    [
+      placeProcessedData,
+      props.selection.id,
+      props.ancestorGenerations,
+      props.descendantGenerations,
+    ],
+  );
+
   useEffect(() => {
     const propsWithProcessedData: ChartProps = {...props, data: processedData};
     if (prevProps) {
@@ -57,7 +74,9 @@ export function Chart(props: ChartProps) {
         props.hideIds !== prevProps?.hideIds ||
         props.hideSex !== prevProps?.hideSex ||
         props.placeDisplay !== prevProps?.placeDisplay ||
-        props.placeCount !== prevProps?.placeCount;
+        props.placeCount !== prevProps?.placeCount ||
+        props.ancestorGenerations !== prevProps?.ancestorGenerations ||
+        props.descendantGenerations !== prevProps?.descendantGenerations;
       const resetPosition =
         props.chartType !== prevProps?.chartType ||
         props.data !== prevProps.data ||
