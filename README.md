@@ -281,10 +281,10 @@ docker run -d -p 8080:8080 \
 
 ### Historical Events on the Timeline
 
-The hourglass chart shows historical events (wars, revolutions, etc.) on its
-time axis. They are loaded at runtime from `timeline-events.json`, served next
-to `index.html`, so they can be changed on the server without rebuilding the
-app. The default list is in
+The timeline chart (`view=timeline`) shows historical events (wars, revolutions,
+etc.) on its time axis. They are loaded at runtime from `timeline-events.json`,
+served next to `index.html`, so they can be changed on the server without
+rebuilding the app. The default list is in
 [public/timeline-events.json](public/timeline-events.json).
 
 The file contains an array of events. `from` and `to` are years (`1914`) or

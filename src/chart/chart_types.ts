@@ -17,6 +17,8 @@ export enum ChartType {
   Relatives,
   Donatso,
   Fancy,
+  /** Hourglass chart on a time axis: boxes placed at birth years. */
+  Timeline,
 }
 
 export interface ChartProps {
@@ -48,7 +50,8 @@ export const chartColors = new Map<ChartColors, TopolaChartColors>([
 export function getChartType(chartType: ChartType) {
   switch (chartType) {
     case ChartType.Hourglass:
-      // Hourglass chart with a time axis: boxes placed at birth years.
+      return HourglassChart;
+    case ChartType.Timeline:
       return TimelineHourglassChart;
     case ChartType.Relatives:
       return RelativesChart;

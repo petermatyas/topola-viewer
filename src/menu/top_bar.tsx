@@ -84,6 +84,13 @@ export function TopBar(props: Props) {
             defaultMessage="Hourglass chart"
           />
         </Dropdown.Item>
+        <Dropdown.Item onClick={() => changeView('timeline')}>
+          <Icon name="history" />
+          <FormattedMessage
+            id="menu.timeline"
+            defaultMessage="Timeline chart"
+          />
+        </Dropdown.Item>
         {props.allowAllRelativesChart ? (
           <Dropdown.Item onClick={() => changeView('relatives')}>
             <Icon name="users" />

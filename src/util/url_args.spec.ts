@@ -132,6 +132,12 @@ describe('url_args', () => {
       expect(getArguments(createLocation('?view=donatso')).chartType).toBe(
         ChartType.Donatso,
       );
+      expect(getArguments(createLocation('?view=timeline')).chartType).toBe(
+        ChartType.Timeline,
+      );
+      expect(getArguments(createLocation('?view=hourglass')).chartType).toBe(
+        ChartType.Hourglass,
+      );
       expect(getArguments(createLocation('?view=unknown')).chartType).toBe(
         ChartType.Hourglass,
       );
