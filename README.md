@@ -19,7 +19,12 @@ If you find this project useful, consider buying me a coffee.
 ## Features
 
 - Hourglass chart
+- Timeline chart (`view=timeline`) – an hourglass chart on a time axis: each
+  person's box is placed at their birth year, its height shows the lifespan,
+  and important historical events are drawn in the background
+  (see [Historical Events on the Timeline](#historical-events-on-the-timeline))
 - All relatives chart
+- Limit the number of displayed ancestor and descendant generations
 - Click on a person to focus
 - Open standard GEDCOM files you can export from any genealogy application
 - Load from URL (just point to a GEDCOM file on the Web)
