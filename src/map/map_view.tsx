@@ -18,6 +18,12 @@ import {
   selectPeople,
   yearRange,
 } from './map_filters';
+import {
+  defaultTileSource,
+  loadSavedTileSource,
+  saveTileSource,
+  tileSources,
+} from './map_tiles';
 import {indiName, MissingPlaces} from './missing_places';
 import {
   ancestorSegments,
@@ -33,9 +39,6 @@ import {
   PlacedEvent,
 } from './places';
 
-const DEFAULT_TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-const TILE_ATTRIBUTION =
-  '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors';
 /** Number of animation steps when playing over the whole time range. */
 const PLAYBACK_STEPS = 120;
 const PLAYBACK_INTERVAL_MS = 100;
@@ -245,10 +248,32 @@ export function MapView(props: Props) {
       zoom: 6,
       worldCopyJump: true,
     });
-    L.tileLayer(import.meta.env.VITE_MAP_TILE_URL || DEFAULT_TILE_URL, {
-      maxZoom: 18,
-      attribution: TILE_ATTRIBUTION,
-    }).addTo(map);
+    // Background maps with a layer switcher; the choice is remembered.
+    const sources = tileSources(import.meta.env.VITE_MAP_TILE_URL);
+    const initial = defaultTileSource(
+      sources,
+      window.location.protocol,
+      loadSavedTileSource(),
+    );
+    const baseLayers: Record<string, L.TileLayer> = {};
+    for (const source of sources) {
+      const layer = L.tileLayer(source.url, {
+        maxZoom: source.maxZoom,
+        attribution: source.attribution,
+        ...(source.subdomains ? {subdomains: source.subdomains} : {}),
+      });
+      baseLayers[source.name] = layer;
+      if (source === initial) {
+        layer.addTo(map);
+      }
+    }
+    L.control.layers(baseLayers, undefined, {position: 'topright'}).addTo(map);
+    map.on('baselayerchange', (event: L.LayersControlEvent) => {
+      const source = sources.find((s) => s.name === event.name);
+      if (source) {
+        saveTileSource(source.id);
+      }
+    });
     linesRef.current = L.layerGroup().addTo(map);
     mapRef.current = map;
 

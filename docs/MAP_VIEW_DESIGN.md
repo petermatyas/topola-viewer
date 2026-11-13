@@ -30,7 +30,15 @@ Eltérések a tervtől:
 - **A feliratok angolok**, ahogy az alkalmazás többi része. Magyar fordítás az
   alkalmazásban nincs; a többi nyelv a meglévő `src/translations/` fájlokba
   vehető fel (`map.*` és `menu.map` azonosítók).
-- **A csempék URL-je** a `VITE_MAP_TILE_URL` környezeti változóval írható át.
+- **Választható háttértérképek.** Az openstreetmap.org csempeszervere a fájlból
+  (`file://`) megnyitott oldalt böngészőtől függően letilthatja („Access
+  blocked”), mert ilyenkor a böngésző nem küld `Referer` fejlécet. A CARTO is
+  elutasítja ezeket a kéréseket („API KEY REQUIRED”). Ezért a térkép jobb felső
+  sarkában rétegválasztó van: OpenStreetMap, OpenStreetMap France, OpenStreetMap
+  Deutschland és OpenTopoMap, mind OSM-adatokból. Fájlból megnyitva az
+  OpenStreetMap France, webszerverről az OpenStreetMap az alapértelmezett. A
+  választást a böngésző megjegyzi ([map_tiles.ts](../src/map/map_tiles.ts)).
+  Saját csempe-URL a `VITE_MAP_TILE_URL` környezeti változóval adható meg.
 
 ## Döntések
 

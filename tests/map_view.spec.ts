@@ -5,8 +5,9 @@ test.describe('Map view', () => {
   test.beforeEach(async ({page, context}) => {
     await setupHermeticEnvironment(context);
     // Serve empty map tiles instead of downloading them from OpenStreetMap.
-    await context.route('**/tile.openstreetmap.org/**', (route) =>
-      route.fulfill({status: 204}),
+    await context.route(
+      /(openstreetmap\.(org|fr|de)|opentopomap\.org)\/.*\.png$/,
+      (route) => route.fulfill({status: 204}),
     );
     await page.goto('/');
     await page.setInputFiles('#fileInput', 'src/datasource/testdata/map.ged');
