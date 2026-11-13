@@ -9,3 +9,9 @@ test-results/
 .env
 playwright.local.config.ts
 dist-single
+
+# Family tree files contain personal data; only test and example files are tracked.
+*.ged
+*.GED
+!src/datasource/testdata/*.ged
+!docker/examples/**/*.ged

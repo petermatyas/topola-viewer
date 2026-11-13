@@ -19,6 +19,8 @@ validation and context safety before writing code, doing so is optional.
 - **[IMMEDIATE_FAMILY_SECTION_DESIGN.md](IMMEDIATE_FAMILY_SECTION_DESIGN.md)**:
   Side panel block consolidating parents, spouses, and children for efficient
   off-screen tree navigation.
+- **[MAP_VIEW_DESIGN.md](MAP_VIEW_DESIGN.md)**: OpenStreetMap map beside the
+  family tree, with place geocoding, filters and migration lines (in Hungarian).
 - **[PLAYWRIGHT_DESIGN.md](PLAYWRIGHT_DESIGN.md)**: Playwright E2E testing
   architecture, Vite development/preview server lifecycle integration, tracking
   blocker interceptors, and embedded iframe communication.

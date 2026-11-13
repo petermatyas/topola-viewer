@@ -19,6 +19,8 @@ export enum ChartType {
   Fancy,
   /** Hourglass chart on a time axis: boxes placed at birth years. */
   Timeline,
+  /** Hourglass chart next to a map of the places of the individuals. */
+  Map,
 }
 
 export interface ChartProps {

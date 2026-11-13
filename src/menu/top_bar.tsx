@@ -91,6 +91,10 @@ export function TopBar(props: Props) {
             defaultMessage="Timeline chart"
           />
         </Dropdown.Item>
+        <Dropdown.Item onClick={() => changeView('map')}>
+          <Icon name="map outline" />
+          <FormattedMessage id="menu.map" defaultMessage="Chart with map" />
+        </Dropdown.Item>
         {props.allowAllRelativesChart ? (
           <Dropdown.Item onClick={() => changeView('relatives')}>
             <Icon name="users" />

@@ -8,6 +8,10 @@ logic, data source adapters, menus, side panel, translations, and utilities.
 
 - **[datasource](datasource)**: Implements data sources for loading GEDCOM
   files, URLs, WikiTree API data, and embedded data.
+- **[map](map)**: The "Chart with map" view: hourglass chart next to an
+  OpenStreetMap (Leaflet) map of the places in the GEDCOM file, with filters,
+  migration lines and a list of places without coordinates. See
+  [MAP_VIEW_DESIGN.md](../docs/MAP_VIEW_DESIGN.md).
 - **[menu](menu)**: Contains components for the top navigation bar, search bar,
   and various menus (upload, URL, WikiTree).
 - **[sidepanel](sidepanel)**: Contains components for the side panel, which

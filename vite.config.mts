@@ -22,6 +22,19 @@ function publicFileAsDataUrl(fileName: string, mimeType: string): string {
 }
 
 /**
+ * Fonts embedded in the single-file build instead of loading them from Google
+ * Fonts: Montserrat (used by the charts) and Lato (used by Semantic UI).
+ */
+const EMBEDDED_FONTS = [
+  '@fontsource-variable/montserrat/wght.css',
+  '@fontsource-variable/montserrat/wght-italic.css',
+  ...['400', '700', '400-italic', '700-italic'].flatMap((style) => [
+    `@fontsource/lato/latin-${style}.css`,
+    `@fontsource/lato/latin-ext-${style}.css`,
+  ]),
+];
+
+/**
  * Plugins for `vite build --mode singlefile`, which produces a single
  * dist-single/index.html that can be opened directly from disk (file://).
  * Files from public/ are not bundled, so the ones the app needs are embedded
@@ -31,23 +44,57 @@ function singleFilePlugins(): PluginOption[] {
   return [
     viteSingleFile(),
     {
-      // Vite does not inline SVGs referenced with a #fragment, so they would
-      // stay separate files. They are only legacy fallbacks for the icon fonts
-      // (browsers use the inlined woff2), so the references are dropped.
-      name: 'drop-svg-font-fallbacks',
+      name: 'offline-semantic-ui-css',
       enforce: 'pre',
       transform(code: string, id: string) {
-        if (id.includes('semantic-ui-css') && id.endsWith('.css')) {
-          return code.replace(/,\s*url\([^)]*\.svg#[^)]*\)\s*format\([^)]*\)/g, '');
+        if (!id.includes('semantic-ui-css') || !id.endsWith('.css')) {
+          return;
+        }
+        return (
+          code
+            // Vite does not inline SVGs referenced with a #fragment, so they
+            // would stay separate files. They are only legacy fallbacks for
+            // the icon fonts (browsers use the inlined woff2), so they are
+            // dropped.
+            .replace(/,\s*url\([^)]*\.svg#[^)]*\)\s*format\([^)]*\)/g, '')
+            // Lato is loaded from Google Fonts; embed it instead.
+            .replace(
+              /@import url\(https:\/\/fonts\.googleapis\.com[^)]*\);?/,
+              EMBEDDED_FONTS.map((f) => `@import '${f}';`).join(''),
+            )
+        );
+      },
+    },
+    {
+      // The charts ask for "Montserrat", but the variable font package calls
+      // it "Montserrat Variable".
+      // This runs on the built output (after the CSS has been inlined into
+      // the HTML) because files pulled in with @import do not go through the
+      // transform hook.
+      name: 'rename-montserrat-variable',
+      enforce: 'post',
+      generateBundle(_options, bundle) {
+        for (const file of Object.values(bundle)) {
+          if (file.type === 'asset' && /\.(css|html)$/.test(file.fileName)) {
+            file.source = String(file.source).replace(
+              /(['"]?)Montserrat Variable\1/g,
+              'Montserrat',
+            );
+          }
         }
       },
     },
     {
-      name: 'inline-favicon',
+      name: 'offline-index-html',
       transformIndexHtml(html: string) {
-        return html.replace(
-          'href="favicon.png"',
-          `href="${publicFileAsDataUrl('favicon.png', 'image/png')}"`,
+        return (
+          html
+            .replace(
+              'href="favicon.png"',
+              `href="${publicFileAsDataUrl('favicon.png', 'image/png')}"`,
+            )
+            // Montserrat is embedded via EMBEDDED_FONTS instead.
+            .replace(/\s*<link[^>]*fonts\.(googleapis|gstatic)\.com[^>]*>/g, '')
         );
       },
     },

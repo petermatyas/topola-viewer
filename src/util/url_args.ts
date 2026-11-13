@@ -116,6 +116,7 @@ export function getArguments(location: H.Location): Arguments {
     ['fancy', ChartType.Fancy],
     ['donatso', ChartType.Donatso],
     ['timeline', ChartType.Timeline],
+    ['map', ChartType.Map],
   ]);
 
   const hash = getParam('file');

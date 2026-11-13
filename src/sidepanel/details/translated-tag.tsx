@@ -57,12 +57,15 @@ interface Props {
   tag: string;
 }
 
+/** Message id and English description of a GEDCOM tag. */
+export function tagMessage(tag: string) {
+  const normalizedTag = tag.replace(/_/g, '');
+  return {
+    id: `gedcom.${normalizedTag}`,
+    defaultMessage: TAG_DESCRIPTIONS.get(normalizedTag) || normalizedTag,
+  };
+}
+
 export function TranslatedTag(props: Props) {
-  const normalizedTag = props.tag.replace(/_/g, '');
-  return (
-    <FormattedMessage
-      id={`gedcom.${normalizedTag}`}
-      defaultMessage={TAG_DESCRIPTIONS.get(normalizedTag) || normalizedTag}
-    />
-  );
+  return <FormattedMessage {...tagMessage(props.tag)} />;
 }

@@ -1,4 +1,4 @@
-import {useCallback, useMemo} from 'react';
+import {lazy, Suspense, useCallback, useMemo} from 'react';
 import {useIntl} from 'react-intl';
 import {Loader, SidebarPushable, SidebarPusher} from 'semantic-ui-react';
 import {IndiInfo} from 'topola';
@@ -24,6 +24,9 @@ import {Config, Ids, Sex} from '../sidepanel/config/config';
 import {SidePanel} from '../sidepanel/side-panel';
 import {analyticsEvent} from '../util/analytics';
 import {idToIndiMap, TopolaData} from '../util/gedcom_util';
+
+// Leaflet is only loaded when the map view is opened.
+const MapPage = lazy(() => import('../map/map_page'));
 
 export enum AppState {
   INITIAL,
@@ -162,6 +165,20 @@ export function ViewPage() {
     if (!data) {
       return null;
     }
+    if (chartType === ChartType.Map) {
+      return (
+        <Suspense fallback={<Loader active size="large" />}>
+          <MapPage
+            data={data}
+            selection={selection}
+            config={config}
+            onSelection={onSelection}
+            onDetailSelection={onDetailSelection}
+            chart={renderTopolaChart(selection, ChartType.Hourglass)}
+          />
+        </Suspense>
+      );
+    }
     if (chartType === ChartType.Donatso) {
       return (
         <DonatsoChart
@@ -172,11 +189,18 @@ export function ViewPage() {
         />
       );
     }
+    return renderTopolaChart(selection, chartType);
+  }
+
+  function renderTopolaChart(selection: IndiInfo, topolaChartType: ChartType) {
+    if (!data) {
+      return null;
+    }
     return (
       <Chart
         data={data.chartData}
         selection={selection}
-        chartType={chartType}
+        chartType={topolaChartType}
         onSelection={onSelection}
         onDetailSelection={onDetailSelection}
         freezeAnimation={freezeAnimation}
