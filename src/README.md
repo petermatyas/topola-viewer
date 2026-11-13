@@ -59,7 +59,5 @@ logic, data source adapters, menus, side panel, translations, and utilities.
   `parse-gedcom` library.
 - **[react-app-env.d.ts](react-app-env.d.ts)**: Type definitions for React
   application environment.
-- **[react-linkify.d.ts](react-linkify.d.ts)**: Type definitions for the
-  `react-linkify` library.
 - **[vite-env.d.ts](vite-env.d.ts)**: Type definitions for Vite environment
   variables.

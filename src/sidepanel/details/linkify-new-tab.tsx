@@ -1,32 +1,18 @@
-import Linkify from 'react-linkify';
+import Linkify from 'linkify-react';
 
 interface Props {
   children: React.ReactNode;
 }
 
+const OPTIONS = {
+  target: '_blank',
+  rel: 'noopener noreferrer',
+};
+
 /**
- * A wrapper component that uses react-linkify to convert any plain text URLs
+ * A wrapper component that uses linkify-react to convert any plain text URLs
  * within its children into clickable links that open in a new tab.
  */
 export function LinkifyNewTab({children}: Props) {
-  return (
-    <Linkify
-      componentDecorator={(
-        decoratedHref: string,
-        decoratedText: string,
-        key: number,
-      ) => (
-        <a
-          href={decoratedHref}
-          key={key}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {decoratedText}
-        </a>
-      )}
-    >
-      {children}
-    </Linkify>
-  );
+  return <Linkify options={OPTIONS}>{children}</Linkify>;
 }
